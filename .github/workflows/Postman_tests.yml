@@ -1,26 +1,27 @@
 name: Api-Test-Build
 
 on:
-   push:
+  push:
     branches: 
       - 'main'
   pull_request:
     branches: 
       - 'main'
-
   workflow_dispatch:
 
 jobs:
   test-api:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Install Node
-        uses: actions/setup-node@v1
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: "16.x"
       
-      - name: Install Newman, HTMLReporter and Slack Reporter
+      - name: Install Newman, HTMLReporter, and Slack Reporter
         run: |
           npm install -g newman
           npm install -g newman-reporter-htmlextra
@@ -32,10 +33,10 @@ jobs:
           ENVIRONMENT_UID: 34671145-9c5ca044-2513-4b0d-b146-16c5c1e532ec
           API_KEY: PMAK-67585d5c8e3c100001b6cabe-62d370d36ab7562316430f5d40024426ac
         run: |
-          newman run https://api.getpostman.com/collections/$COLLECTION_UID?apikey=$API_KEY --enviroment https://api.getpostman.com/environment/$ENVIRONMENT_UID?apikey=$API_KEY
-        
-      - name: Output the Result Details
-        uses: actions/upload-artifact@v2
+          newman run https://api.getpostman.com/collections/$COLLECTION_UID?apikey=$API_KEY --environment https://api.getpostman.com/environments/$ENVIRONMENT_UID?apikey=$API_KEY
+      
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v3
         with:
           name: RunReports
           path: testResults
